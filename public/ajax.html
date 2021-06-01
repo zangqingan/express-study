@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ajax</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>ajax</h1>
+  <button id="btn">获取后端数据</button>
+  <script>
+    let btn = document.querySelector('#btn')
+    btn.addEventListener('click',() => {
+        $.get('/api/ajaxProduct').then(res => {
+        // console.log(res)
+        // 前端渲染
+        res.forEach(element => {
+          $('body').append(`<h3>${element.title}</h3>`)
+        });
+        
+      })
+    })
+    
+  </script>
+</body>
+</html>
