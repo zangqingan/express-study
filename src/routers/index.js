@@ -1,4 +1,4 @@
-// 中间批量导入注册路由中间件
+// 中间件批量导入注册路由中间件
 module.exports = app => {
     // 引入fs模块操作文件
     const fs = require('fs')
@@ -14,7 +14,6 @@ module.exports = app => {
             const router = require(`./${value}`)
             app.use('/api',router)
           })
-
         }else{
           // 输入错误信息
           console.log('read fail!',err)

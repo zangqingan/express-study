@@ -5,16 +5,16 @@ const app = express()
 
 /*****引入各种配置、挂载路由、业务代码、其它中间件等开始 *****/
 /*全局相关的配置 */
-// 引入端口配置
-const { PORT } = require('./config/config')
+// 引入端口等配置
+const { PORT } = require('./config/globalConfig')
 
 /*全局的静态资源托管配置使用express内置中间件 */
 // app.use(express.static('public'))
 // 虚拟目录
 app.use('/static',express.static('public'))
 
-/*全局的跨域配置一般直接使用第三方中间件 */
-// 跨域,自定义中间件
+/*全局的跨域配置一般直接使用第三方中间件放在路由配置之前*/
+// 跨域
 // app.use(function (req, res, next) {
 //     res.header('Access-Control-Allow-Origin', '*');
 //     res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
@@ -26,10 +26,10 @@ app.use('/static',express.static('public'))
 // const cors = require('cors')
 // app.use(cors())
 // 简写
-app.use(require('cors')())
+// app.use(require('cors')())
 
 /*数据库连接配置文件导入 */
-require('./config/dbConnect')()
+require('./config/mongodbConnect')()
 
 /*全局的路由配置一般不写而是抽离成路由文件 */
 // 最初的函数形式
@@ -58,6 +58,7 @@ require('./config/dbConnect')()
 // const allRouter = require('./routers/index')
 // allRouter(app)
 // 简写
+
 require('./routers/index')(app)
 
 
@@ -72,6 +73,7 @@ app.use((err, req, res, next) => {
 })
 
 /*****引入各种配置、挂载路由、业务代码、其它中间件等结束 *****/
+
 
 // 3.开启http服务，监听3000端口。
 app.listen(PORT,() => {
