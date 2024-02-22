@@ -1,58 +1,238 @@
-# 序章、express-study
-&emsp;&emsp;对基于 Node.js 平台，快速、开放、极简的 Web 开发框架express的学习记录。
+# 一、概述
+对基于 Node.js 平台，快速、开放、极简的 Web 开发框架express的学习记录。
+2024.2.22 重新梳理express技术栈、总结出express作为web server时需要的技术。
 
-# 一、express概述
-&emsp;&emsp;express是一个基于 Node.js 平台的，快速的、开放的、极简的 Web 开发框架，本质上是对原生nodejs的二次封装，并提供api方便开发者加快项目开发，便于团队开发。它是nodejs最常用的web server框架。我们主要也是学习express框架作为web server提供api使用。
+# 二、Express.js基础
 
-# 二、express安装
-安装方法一：
-1.和原生nodejs一样也先初始化node项目的包管理文件: package.json ,命令: npm init -y , -y选项会忽略命令行的询问，直接采用默认配置。
-2.安装express框架: $ npm install express, 不过一般安装下一版本 $ npm install express@next 
+## 2.1 定义
+express是一个基于 Node.js 平台的，快速的、开放的、极简的 Web 开发框架，本质上是对原生nodejs的http模块的二次封装，并提供api方便开发者加快项目开发，便于团队开发。它类似于前端的jQuery。它是nodejs最常用的web server框架。我们主要也是学习express框架作为web server提供api使用。
+
+[官方网站](http://expressjs.com) 主要用来查询相关api
+
+## 2.2 安装
+
+1. 安装方法一：
+ - 和原生nodejs一样也先初始化node项目的包管理文件: package.json ,命令: `$ npm init -y` , -y选项会忽略命令行的询问，直接采用默认配置。
+ - 安装express框架: `$ npm install express`, 不过一般安装下一版本 5.x以上的 `$ npm install express@next `
 注意:在npm 5.0+以上的版本，默认情况下会将安装的模块添加到 package.json 文件中的 dependencies 列表中。而对于较老的 npm 版本，你就必须指定 --save 参数。这样在执行 npm install 命令时即可自动安装依赖列表中所列出的所有依赖模块。
 
-使用方法二：使用 express-generator 脚手架快速创建一个express项目框架，之后就可以使用express关键字创建项目了。不过这个创建的项目前后端是不分离的，所以用的不多了解即可。
-npm install express-generator -g
-$ express --view= view engine projectName
-如：express --view=ejs sobooks
+2. 安装方法二：使用 express-generator 脚手架快速创建一个express项目框架，之后就可以使用express关键字创建项目了。不过这个创建的项目前后端是不分离的，所以用的不多了解即可。
+  - 先安装脚手架 `$ npm install -g express-generator`
+  - 再指定模板引擎 `$ express --view= view engine projectName`
+  - 如：express --view=ejs sobooks、创建一个模板引擎为ejs的 express项目 sobooks。
 
-# 三、express入门
-## 3.1 express项目目录一般结构
-&emsp;&emsp;这是人为定义的结构，事实上你可以所有代码都写在一个文件上如index.js。但是这样阅读不友好，也不利于开发和维护，所以人为的定义这种目录结构，这只是我个人的习惯。
-项目名/
-  node_modules，npm安装的各种包存放目录
-  public/，公共资源存放位置，如上传图片文件等资源
-    upload，上传资源目录
-    keys，密钥存放目录
-  src/，项目源码实际存放的位置
-    config，各种配置的存放目录
-    controllers，具体业务处理代码存放目录
-    middleware，自定义或第三方中间件存放目录
-    models，mongodb数据库集合存放目录
-    routers，路由存放目录
-    index.js，项目的入口启动文件，你也可以命名为app.js等等随你喜欢
+## 2.3 项目目录结构
+和nodejs一样这是人为定义的结构，事实上你可以所有代码都写在一个文件上如index.js。
+但是这样阅读不友好，也不利于开发和维护，所以人为的定义这种目录结构，这只是我个人的习惯。
+使用脚手架时自带目录的。
+```javaScript
+
+项目名称
+  -node_modules  项目安装依赖存放目录初始化node项目时自动生成
+  -public 存放静态文件、图片、音频、视频等资源目录
+    -images 图片
+    -logs 日志
+    -music 音乐
+    -upload 上传资源目录
+    -keys 密钥存放目录
+    -.....其它静态资源
+  -src 项目代码的实际存放位置
+    -config 项目全局相关的配置
+    -doc 存放项目说明文档、接口文档等
+    -controllers 控制器具体业务处理代码存放目录
+    -models 数据库表定义文件目录
+    -middleware  自定义模块第三方中间件 
+    -routers 项目路由
+    -views 前后端不分离时的页面文件
+    -utils 自定义工具类
+    -index.js 项目入口文件，你也可以命名为app.js等等随你喜欢
   .gitignore，提交github等远程仓库时规定的忽略内容文件
   LICENSE，开源协议文件
   package.json，node项目的包管理文件
   README.md，读我文件用来记录项目信息的md文件
 
-##  3.2 express框架创建web服务器
-&emsp;&emsp;在入口文件index.js里书写代码，引入各种配置、挂载路由、业务代码、其它各种中间件等具体代码会抽离书写在对应的项目结构目录中，以js文件存在再通过commonjs规范引入。
-1.引入express框架
+```
+
+## 2.4 基本使用
+使用express.js启动一个web server服务是非常简单且快速的。
+
+**入口文件 index.js**
+```javaScript
+// 1.引入express框架
 const express = require('express')
-2.初始化express实例app，用来创建web服务器 ，express() 是一个由 express 模块导出的顶层入口（top-level）函数。
+// 2.初始化express实例app，用来创建web服务器 ，express() 是一个由 express 模块导出的顶层入口（top-level）函数。
 const app = express()
 
 /*****引入各种配置、挂载路由、业务代码、其它中间件等开始 *****/
+// 访问本地http://localhost:3000 就会返回 Hello World!
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
-app.use('/static',express.static('public'))等等
-const { PORT } = require('./config/config')
 /*****引入各种配置、挂载路由、业务代码、其它中间件等结束 *****/
 
-3.开启http服务，监听3000端口。
-app.listen(PORT,() => {
-  console.log(`server is running on http://localhost:${PORT}`)
+// 3.启动服务监听端口
+app.listen(3000, () => {
+  console.log(`Example app listening on port 3000`)
 })
-至此，一个简单的web服务器已经搭建成功。和原生node类似在开启http服务之后，每次客户端发送HTTP请求时也会触发回调函数中的两个对象request(简写req)和response(简写res)，而且express对这两个对象进行了进一步的封装让开发者更加方便的使用。
+
+
+```
+
+## 2.5 express包提供的内容
+### 1. express()
+它express模块导出的顶级函数对象、在引入 express 之后得到的就是它。本质是 createApplication 函数。
+
+### 2. express对象下挂载的常用的方法
+这些方法本质是绑定在 exports 对象下的。
+1. **express.static()**
+在Express中提供静态文件功能-express.static(root,options)、它就是前端上次静态资源时存放的目录。
+提供图像、CSS文件和JavaScript文件在本地加载访问的目录。
+本质是一个中间件使用是很简单的、接受一个提供静态资产的根目录路径参数root和配置对象options。
+```javaScript
+// 直接指定目录使用
+app.use(express.static('public'))
+// 在public下的静态资源就能直接被访问到、注意'public'目录本身不是URL的一部分。
+// 这是因为Express查找的是相对于静态目录的文件。
+http://localhost:3000/images/kitten.jpg
+http://localhost:3000/css/style.css
+http://localhost:3000/js/app.js
+http://localhost:3000/images/bg.png
+http://localhost:3000/hello.html
+// 增加虚拟目录(该路径目录在文件系统中实际上不存在)
+app.use('/static',express.static('public'))
+http://localhost:3000/static/images/kitten.jpg
+http://localhost:3000/static/css/style.css
+http://localhost:3000/static/js/app.js
+http://localhost:3000/static/images/bg.png
+http://localhost:3000/static/hello.html
+// 注意上面两种方法指定的路径'public'都是相对于启动node进程的地方的，所以为了更安全我们应该使用如下方法
+const path = require('path')
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname, 'public')))
+
+
+```
+
+2. **express.json()**
+用来转换成JSON数据格式的方法。
+
+3. **express.Router()**
+用来创建一个新的路由对象、实际开发中是经常使用的根据业务模块的不同生产不同的子路由对象。
+接收一个可选参数对象options指定路由器的行为、它的使用方法和应用程序对象app层级的路由一样
+
+```javaScript
+
+const express = require('express')
+// 创建子路由对象
+const router = express.Router()
+// 接口
+router.get('/login',handleCallback,handleCallback,...)
+// ....其它接口
+
+// 导出子路由对象-在入口文件注册即可。
+module.exports = router
+
+```
+
+
+## 2.6 app对象
+app对象通常表示Express应用程序、它是通过调用express模块导出的顶层express()函数来创建的。
+本质上就是一个被设计作为回调传递给Node的HTTP服务器来处理网络请求的JavaScript回调函数、所以它其实是可以传递给 http.createServer()的。
+这也意味着app里肯定也是有请求对象request、响应对象response、同时express增加了第三个参数 next函数用来释放事件句柄。
+我们也是主要学习这个对象下的以下常用方法、主要是路由和中间件的处理。
+1. 处理路由-即处理HTTP请求 - app.METHOD and app.param
+2. 注册以及配置中间件 - app.use
+3. Rendering HTML views - app.render
+4. Registering a template engine - app.engine
+
+
+### 1. app.listen([port[, host[, backlog]]][, callback]) 方法
+和原生node的listen() 方法作用一样、应用实例初始化后用来绑定并监听指定主机和端口上的连接的方法。
+express本质是对其做了一层封装、本质上返回的还是一个  http.Server 对象。
+```javaScript
+app.listen = function () {
+  const server = http.createServer(this)
+  return server.listen.apply(server, arguments)
+}
+
+```
+
+### 2. app.use([path,] callback [, callback...])方法
+在指定路径上挂载指定的中间件函数或函数:当HTTP网络请求的请求路径与path匹配时执行中间件函数。
+1. 可选路径参数path可以是以下的值-就是实际开发中的api接口路径-默认值是root('/')也就是所有。
+    1. 表示路径的字符串 - '/abcd' -> 匹配 /abcd
+    2. 匹配路径的路径模式 - '/ab(c?)d' -> 匹配 /abcd 和 /abd
+    3. 匹配路径的正则表达式模式 - /\/abc|\/xyz/ -> 匹配 /abc and /xyz
+    4. 上述3个任意项的组合数组 - ['/abcd', '/xyza', /\/lmn|\/pqr/] -> 匹配 /abcd, /xyza, /lmn, and /pqr
+2. callback-路径匹配时执行的中间件函数、可以是以下的值
+    1. 一个中间件函数
+    2. 多个中间件函数(以逗号分隔)
+    3. 中间件函数数组
+    4. 以上所有的组合。
+**中间件函数示例:**
+```javaScript
+// 一个
+app.use((req, res, next) => {
+  next()
+})
+
+// 多个
+const r1 = express.Router()
+r1.get('/', (req, res, next) => {
+  next()
+})
+const r2 = express.Router()
+r2.get('/', (req, res, next) => {
+  next()
+})
+app.use(r1, r2)
+
+//  使用数组进行逻辑分类	
+const r1 = express.Router()
+r1.get('/', (req, res, next) => {
+  next()
+})
+const r2 = express.Router()
+r2.get('/', (req, res, next) => {
+  next()
+})
+app.use([r1, r2])
+
+// 以上组合
+function mw1 (req, res, next) { next() }
+function mw2 (req, res, next) { next() }
+
+const r1 = express.Router()
+r1.get('/', (req, res, next) => { next() })
+
+const r2 = express.Router()
+r2.get('/', (req, res, next) => { next() })
+
+const subApp = express()
+subApp.get('/', (req, res, next) => { next() })
+
+app.use(mw1, [mw2, r1, r2], subApp)
+
+
+```
+
+### 3. app.METHOD(path, callback [, callback ...])方法
+
+
+
+
+## 2.7 
+
+
+
+## 2.8
+
+
+# 三、express入门
+
+##  3.2 express框架创建web服务器
+
 常见属性如下：
  req:request的缩写，表示请求对象，可以用来获取一些客户端请求发送给服务器的信息。
  即客户端传过来的东西，不难看出它是对原生node的更近一步封装。
@@ -74,11 +254,9 @@ app.listen(PORT,() => {
  res.setHeader('Content-Type','text/html;charset=utf-8') 设置响应头的数据编码格式
  res.send() 响应数据返回给前端
 
-## 3.3 express框架提供的常见属性和方法
 
 
-
-# 四、express中间件
+# 四、中间件
 ## 4.1 中间件概述
 &emsp;&emsp;express中间件是在最终请求处理程序之前在原始请求之后所以叫中间件，它的本质是一个函数，一个可以访问请求对象req，响应对象res，和next()应用程序请求-响应周期中下一个函数(调用这个函数就会将控制权传递给下一个中间件函数。)的函数。
 事实上所有中间件在使用express实例的use()方法注册后最终都会挂载到入口文件的express实例app上,存放在一个处理堆栈中，然后根据客户端HTTP请求的path和method来判断触发了哪些中间件就执行哪个中间件，通过next()函数可以将控制权传递给下一个中间件函数，这就是中间件工作的流程本质上都是一样的当满足条件时，就执行对应的中间件函数。
@@ -192,11 +370,6 @@ app.use('/static',express.static('public'))
 http://localhost:3000/static/images/kitten.jpg
 
 # 五、常用第三方中间件
-## 5.1 cross-env中间件
-cross-env中间件是用来跨平台设置环境变量的如：NODE_ENV=production
-安装：npm install --save-dev cross-env
-使用：在包管理文件的"scripts"选项中使用，如： "serve": "cross-env NODE_ENV=dev nodemon ./src/index.js",
-
 ## 5.2 cors跨域处理中间件
 安装：npm install cors
 使用：在入口文件引入并注册就可，这种是所有的请求都允许了。更细致的设置npm官网查看https://www.npmjs.com/https://www.npmjs.com/

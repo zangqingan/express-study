@@ -1,3 +1,5 @@
+const path = require('path')
+
 // 1.引入express框架
 const express = require('express')
 // 2.初始化express实例app，用来创建web服务器 ，express() 是一个由 express 模块导出的顶层入口（top-level）函数。
@@ -11,7 +13,9 @@ const { PORT } = require('./config/globalConfig')
 /*全局的静态资源托管配置使用express内置中间件 */
 // app.use(express.static('public'))
 // 虚拟目录
-app.use('/static',express.static('public'))
+// app.use('/static',express.static('public'))
+// 更安全的目录拼接
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 /*全局的跨域配置一般直接使用第三方中间件放在路由配置之前*/
 // 跨域
@@ -58,7 +62,6 @@ require('./config/mongodbConnect')()
 // const allRouter = require('./routers/index')
 // allRouter(app)
 // 简写
-
 require('./routers/index')(app)
 
 
