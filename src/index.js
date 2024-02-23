@@ -68,11 +68,15 @@ require('./routers/index')(app)
 
 
 
-
-
+// 404
+app.use((req, res, next) => {
+  res.status(404).send("Sorry can't find that!")
+  next()
+})
 // error handler
 app.use((err, req, res, next) => {
-  res.status(400).send(err.message)
+  console.error(err.stack)
+  res.status(500).send(err.message)
 })
 
 /*****引入各种配置、挂载路由、业务代码、其它中间件等结束 *****/
