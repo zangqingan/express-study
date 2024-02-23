@@ -1,4 +1,7 @@
 const path = require('path')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 
 // 1.引入express框架
 const express = require('express')
@@ -27,10 +30,16 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 //     next();
 // })
 // 使用第三方cors模块处理跨域，这是表示所有的请求都通过，但是是可以只针对某个http请求的。
-// const cors = require('cors')
-// app.use(cors())
-// 简写
-// app.use(require('cors')())
+app.use(cors())
+
+// 处理HTTP请求体数据
+// 解析 application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// 解析 application/json
+app.use(bodyParser.json())
+
+// 解析cookie
+app.use(cookieParser())
 
 /*数据库连接配置文件导入 */
 require('./config/mongodbConnect')()

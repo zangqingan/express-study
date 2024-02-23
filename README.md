@@ -493,76 +493,118 @@ app.use((err, req, res, next) => {
 使用第三方中间件作用是为Express应用添加功能如：处理日期格式的中间件，错误处理的中间件，处理cookie的中间件，处理session的中间件等等。
 Express常用的第三方中间件可以查看[常用中间件列表](http://expressjs.com/en/resources/middleware.html)
 
-# 四、常用中间件学习
-这些中间件主要包括由Expressjs团队维护的、社区开发的、个人封装的。
-## 4.1 cors跨域处理中间件
-安装：npm install cors
-使用：在入口文件引入并注册就可，这种是所有的请求都允许了。更细致的设置npm官网查看https://www.npmjs.com/https://www.npmjs.com/
+# 四、常用中间件学习 
+这些中间件主要包括由Express.js团队维护的、社区开发的、个人封装的。
 
-## 4.2 mongoose中间件
-mongoose中间件是专门用来操作mongodb数据库的中间件
-安装：npm install mongoose
-使用：一般连接mongodb数据库的配置和具体集合的定义都是抽离到js文件中的。
-1.创建数据库连接
-    module.exports = async () => {
-    // 1.引入mongoose模块
-    const mongoose = require('mongoose')
-    // 引入数据库配置
-    const {MONGODB_CONF} = require('./config')
-    // 2.建立连接
-    await mongoose.connect(
-      MONGODB_CONF,
-      { useNewUrlParser: true,useUnifiedTopology: true,useFindAndModify: false,useCreateIndex: true},
-      err => {
-        if(err){
-          // 数据库连接失败打印错误信息
-          console.log("数据库连接失败",err)
-          return;
-        }
-        console.log("数据库连接成功!")
-
-      }
-    )
+## 4.1 cors 跨域处理中间件
+前端接口请求发生跨域时、后端的解决方案
+1. 自定义中间件解决
+```javaScript
+const cors = function (req, res, next) {
+   res.header('Access-Control-Allow-Origin', '*');
+   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+   res.header('Access-Control-Allow-Methods', '*');
+   res.header('Content-Type', 'application/json;charset=utf-8');
+   next();
 }
-2.根据实际情况创建集合
+app.use(cors)
 
-## 4.3 cookie中间件使用：
-第三方提供的一个中间件：cookie-parser
-安装：npm install cookie-parser
-在入口文件app.js中引入并注册
+
+```  
+2. 使用官方维护的中间件 cors
+通过使用各种选项启用跨域资源共享(CORS)。
+```javaScript
+安装：npm install cors
+const cors = require('cors')
+// 启用所有
+app.use(cors())
+// 针对一个单独的路由
+app.get('/products/:id', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for a Single Route'})
+})
+
+```
+
+
+## 4.2 body-parser 解析HTTP请求体
+使用这个中间件后、数据会自动挂载在 req.body属性上。
+
+```javaScript
+const bodyParser = require('body-parser')
+// 解析 application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// 解析 application/json
+app.use(bodyParser.json())
+app.use(function (req, res) {
+  res.setHeader('Content-Type', 'text/plain')
+  res.write('you posted:\n')
+  res.end(JSON.stringify(req.body, null, 2))
+})
+
+```
+
+## 4.3 cookie 相关的中间件
+官方维护的中间件 cookie-parser、它可以解析cookie header并填充到 req.cookies 属性上。
+安装: `$ npm install cookie-parser`
+
+```javaScript
 const cookieParser = require('cookie-parser')
-注册：app.use(cookieParser())
-<!-- 设置cookie -->
-res.cookie("name",'zhangsan',{maxAge: 900000, httpOnly: true});
+app.use(cookieParser())
+// 设置cookie之后在响应头的 Set-Cookie字段会有设置的cookie信息
+// 之后前端发送请求时请求体就会携带上这个cookie信息
+res.cookie("name",'zhangsan',{maxAge: 900000, httpOnly: true})
 res.cookie(名称,值,{配置信息})
-设置之后在响应头的 Set-Cookie字段会有设置的cookie信息，之后发送请求时请求体就会携带上这个cookie信息
-<!-- 获取设置的cookie -->
-req.cookies.name;
 
-关于设置cookie的参数说明：
-    domain: 域名  
-    name=value：键值对，可以设置要保存的 Key/Value，注意这里的 name 不能和其他属性项的名字一样 
-    Expires： 过期时间（秒），在设置的某个时间点后该 Cookie 就会失效，如 expires=Wednesday, 09-Nov-99 23:12:40 GMT。
-    maxAge： 最大失效时间（毫秒），设置在多少后失效 。
-    secure： 当 secure 值为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效 。
-    Path： 表示 在那个路由下可以访问到cookie。
-    httpOnly：是微软对 COOKIE 做的扩展。如果在 COOKIE 中设置了“httpOnly”属性，则通过程序（JS 脚本、applet 等）将无法读取到COOKIE 信息，防止 XSS 攻击的产生 。
-    singed：表示是否签名cookie, 设为true 会对这个 cookie 签名，这样就需要用 res.signedCookies 而不是 res.cookies 访问它。被篡改的签名 cookie 会被服务器拒绝，并且 cookie 值会重置为它的原始值。
+// 获取设置的cookie
+req.cookies.name
+
+app.get('/', function (req, res) {
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies)
+
+  // Cookies that have been signed
+  console.log('Signed Cookies: ', req.signedCookies)
+})
+
+```
+**关于设置cookie的参数说明**
+1. domain: 域名  
+2. name=value：键值对，可以设置要保存的 Key/Value，注意这里的 name 不能和其他属性项的名字一样 
+3. Expires： 过期时间（秒），在设置的某个时间点后该 Cookie 就会失效，如 expires=Wednesday, 09-Nov-923:12:40 GMT。
+4. maxAge： 最大失效时间（毫秒），设置在多少后失效 。
+5. secure： 当 secure 值为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效 。
+6. Path： 表示 在那个路由下可以访问到cookie。
+7. httpOnly：是微软对 COOKIE 做的扩展。如果在 COOKIE 中设置了“httpOnly”属性，则通过程序（JS 脚applet 等）将无法读取到COOKIE 信息，防止 XSS 攻击的产生 。
+8. singed：表示是否签名cookie, 设为true 会对这个 cookie 签名，这样就需要用 res.signedCookies 而不res.cookies 访问它。被篡改的签名 cookie 会被服务器拒绝，并且 cookie 值会重置为它的原始值。
 cookie加密：让客户端用户无法的获取cookie明文信息，是数据安全的重要部分。在注册时传入密钥
 一般的我们可以在保存cookie时对cookie信息进行加密，或者在res.cookie中对option对象的signed属性设置设置成true即可。当option中signed设置为true后，底层会将cookie的值与“secret”进行hmac加密；
 
-也可以使用crypto模块进行加密
-
-## 4.4 session中间件使用：
-session是另一种记录客户状态的机制，与cookie保存在客户端浏览器不同，session保存在服务器当中；
+## 4.4 session 相关的中间件
+session是另一种记录客户状态的机制，与cookie保存在客户端浏览器不同，session保存在服务器当中。
 相当于升级版本的cookie，存放在服务器端更加的安全。
 当客户端访问服务器时，服务器会生成一个session对象，对象中保存的是key:value值，同时服务器会将key传回给客户端的cookie当中；当用户第二次访问服务器时，就会把cookie当中的key传回到服务器中，最后服务器会吧value值返回给客户端。
 因此上面的key则是全局唯一的标识，客户端和服务端依靠这个全局唯一的标识来访问会话信息数据。
-第三方提供的一个中间件断电会丢失：express-session
-安装：npm install express-session
-在入口文件app.js中引入并注册
+
+1. 官方维护的是 cookie-session
+安装: `$ npm install cookie-session`
+**使用**
+```javaScript
+const cookieSession = require('cookie-session')
+app.use(cookieSession({
+  name: 'session',
+  keys: [/* secret keys */],
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
+```
+
+2. 第三方提供的一个中间件断电会丢失：express-session
+安装: `$ npm install express-session`
+**使用**
+```javaScript
 const session = require('express-session')
-注册：app.use(session({
+app.use(session({
     //配置对象。 
     secret: 'keyboard cat',
     resave: false,
@@ -580,41 +622,33 @@ req.session.cookie.maxAge=1000;
 req.session.destroy(function(err){
 })
 
+```
 
+## 4.5 multer中间件
+multer中间件是用来处理 multipart/form-data 类型的表单数据的、前端页面的form表单需要设置 enctype="multipart/form-data"。也就是文件上传。
 
-
-					
-
-
-## 4.5 multer中间件使用：
-multer中间件用来处理multipart/form-data类型的表单数据
-安装：npm install multer
-前端页面的form表单需要设置 enctype="multipart/form-data"
-引入
+安装: `$ npm install multer`
+```javaScript
+// 前端
+<form action="/profile" method="post" enctype="multipart/form-data">
+  <input type="file" name="avatar" />
+</form>
+// 后端
 const multer = require('multer)
-初始化上传对象，设置上传文件存放的目录位置
+// 初始化上传对象，设置上传文件存放的目录位置
 const upload = multer({dest:'/upload/'})
-使用
-app.use('upload',upload.single("files"),(req,res) => {
-
+app.post('/profile', upload.single('avatar'), function (req, res, next) {
+  // "avatar" 是前端input上传文件输入框的name属性值
+  // req.file is the `avatar` file
+  // req.body will hold the text fields, if there were any
 })
-"files" 是前端input上传文件输入框的name属性值
+```
 
-文件下载：
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 4.6
+## 4.7
+## 4.8
+## 4.9
+## 4.10
+## 4.11
 
 # 五、生产最佳实践
