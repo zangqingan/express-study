@@ -46,6 +46,7 @@ express是一个基于 Node.js 平台的，快速的、开放的、极简的 Web
     -routers 项目路由
     -views 前后端不分离时的页面文件
     -utils 自定义工具类
+    -__tests__ 单元测试
     -index.js 项目入口文件，你也可以命名为app.js等等随你喜欢
   .gitignore，提交github等远程仓库时规定的忽略内容文件
   LICENSE，开源协议文件
@@ -742,9 +743,22 @@ router.post('/login/password', passport.authenticate('local', {
 
 ```
 
-## 4.8
-## 4.9
-## 4.10
-## 4.11
+## 4.8 Unit Testing 单元测试 Jest 
+Jest是一个令人愉快的JavaScript测试框架，专注于简单性。
+安装`$ npm install --save-dev jest`
+额外的配置 `$ npm init jest@latest`
+使用Babel `$ npm install --save-dev babel-jest @babel/core @babel/preset-env`
+
+**配置babel.config.js文件**
+```javaScript
+module.exports = {
+  // 将Babel配置为当前版本的Node
+  presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
+};
+
+```
+
+## 4.9 E2E Testing 测试 
+
 
 # 五、生产最佳实践
