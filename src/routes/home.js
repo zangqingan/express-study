@@ -175,8 +175,13 @@ router.get('/send-cookies',async (req,res) => {
     // 这里就可以判断cookie是否是正确的
     res.status(200).send({msg:'send-cookies'})
 })
-
-
+// 验证
+router.get('/auth',async (req,res) => {
+    // 1. 获取前端传入的用户名和密码
+    // 2. 查找数据库是否存在，不存在报错'用户不存在'、密码不正确报错
+    // 3. 找到了、设置session
+    req.session.user = findUser.username
+})
 
 // 导出子路由对象
 module.exports = router

@@ -611,11 +611,12 @@ const session = require('express-session')
 app.use(session({
     //配置对象。 
     secret: 'keyboard cat',
-    resave: false,
     saveUninitialized: true,
+    resave: false,
     cookie: ('name', 'value',{ maxAge: 5*60*1000,secure: false, name: "seName",resave: false})
 }))
-单独配置
+// 读取
+req.session即可读取session对象。
 //设置session
 req.session.username="张三"
 //获取session
