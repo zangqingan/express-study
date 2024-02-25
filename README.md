@@ -723,7 +723,25 @@ app.post(
 ```
 
 
-## 4.7
+## 4.7 password 身份验证中间件
+这是一种身份认证中间件非常灵活和模块化、可以使用:用户名和密码、邮箱等多种策略验证。
+如本地的用户名和密码验证
+安装`$ npm install passport passport-local`
+**使用**
+
+```javaScript
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const crypto = require('crypto')
+
+
+router.post('/login/password', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login'
+}));
+
+```
+
 ## 4.8
 ## 4.9
 ## 4.10
