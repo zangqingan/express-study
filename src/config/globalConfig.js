@@ -11,7 +11,7 @@ let MONGODB_CONF
 let MYSQL_CONF
 // 开发环境
 if(env === "dev"){
-  MONGODB_CONF = 'mongodb://localhost:27017/express-test',
+  MONGODB_CONF = 'mongodb://127.0.0.1:27017/express-test',
   MYSQL_CONF = {
     host:'localhost',
     user:'root',

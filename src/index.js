@@ -18,7 +18,7 @@ const { PORT } = require('./config/globalConfig')
 // 虚拟目录
 // app.use('/static',express.static('public'))
 // 更安全的目录拼接
-app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use('/static', express.static(path.join(__dirname,'..', 'public')))
 
 /*全局的跨域配置一般直接使用第三方中间件放在路由配置之前*/
 // 跨域
@@ -33,6 +33,8 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(cors())
 
 // 处理HTTP请求体数据
+// express内置的json处理方法
+// app.use(express.json())
 // 解析 application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 // 解析 application/json
@@ -74,14 +76,6 @@ require('./config/mongodbConnect')()
 require('./routers/index')(app)
 
 
-
-
-
-// 404
-app.use((req, res, next) => {
-  res.status(404).send("Sorry can't find that!")
-  next()
-})
 // error handler
 app.use((err, req, res, next) => {
   console.error(err.stack)

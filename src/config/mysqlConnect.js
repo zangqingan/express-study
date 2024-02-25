@@ -8,7 +8,7 @@ const con = mysql.createConnection(MYSQL_CONF)
 con.connect()
 // 封装数据库操作函数 
 async function exec(sql){
-  const promise = new Promise((resolve,reject) => {
+  const promise = new Promise(async (resolve,reject) => {
     await con.query(sql,(error,result) => {
       if(error){
         reject(error)
