@@ -644,7 +644,80 @@ app.post('/profile', upload.single('avatar'), function (req, res, next) {
 })
 ```
 
-## 4.6
+## 4.6 validator 参数验证中间件
+前端传入的数据格式不对时直接报错不写入数据库，这是非常有必要的。
+这个库提供了很多开箱即用的检验方法、如: 非空判断、是否是布尔值、数字等等。
+它们都是一个中间件函数只需要在路由handler之前调用即可。
+不过这些验证函数不会处理校验产生的错误。
+安装: `$ npm install express-validator`
+
+```javaScript
+// 对query的检验
+//  http://localhost:3000/hello?person=John 
+const { query,validationResult,body,checkSchema  } = require('express-validator')
+app.get('/hello', query('person').notEmpty().escape(), (req, res) => {
+  const result = validationResult(req)
+  // 有错误时把错误信息返回。 
+  if (!result.isEmpty()) {
+    return res.status(400).send({ errors: result.array() })
+  }
+  res.send(`Hello, ${req.query.person}`)
+});
+// escape() 转换html标签的防止xss攻击使用。
+// http://localhost:3000/hello 就会返回一个错误
+{
+  "errors": [
+    {
+      "location": "query",
+      "msg": "Invalid value",
+      "path": "person",
+      "type": "field"
+    }
+  ]
+}
+// 对请求体的检验
+// 也可以自定义校验逻辑
+app.post(
+  '/create-user',
+  body('email').custom(async value => {
+    const user = await UserCollection.findUserByEmail(value)
+    if (user) {
+      throw new Error('E-mail already in use')
+    }
+  }),
+  // 重写错误信息
+  body('email').isEmail().withMessage('Not a valid e-mail address'),
+  (req, res) => {
+    // Handle the request
+  }
+)
+
+// 使用模式schema: 模式是一种基于对象的方式，用于定义对请求的验证或清理。
+// 指定已给schema使用 checkSchema函数、它接收一个约束对象
+const createUserValidatorSchema ={
+  username: {
+    errorMessage: 'Invalid username',
+    isEmail: true,
+  },
+  password: {
+    isLength: {
+      options: { min: 8 },
+      errorMessage: 'Password should be at least 8 chars',
+    },
+  }
+}
+
+app.post(
+  '/create-user',
+  checkSchema(createUserValidatorSchema),
+  (req, res) => {
+    // Handle the request
+  }
+)
+
+```
+
+
 ## 4.7
 ## 4.8
 ## 4.9
