@@ -12,7 +12,10 @@ module.exports = app => {
             if(value ==="index.js"){return;}
             // 其它则引入并注册
             const router = require(`./${value}`)
+            // 这里是全部挂载在app应用层
             app.use('/api',router)
+            // 也可以挂载在路由层
+            // router.use('/api',router)
           })
         }else{
           // 输入错误信息

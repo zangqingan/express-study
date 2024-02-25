@@ -550,13 +550,16 @@ app.use(function (req, res) {
 ```javaScript
 const cookieParser = require('cookie-parser')
 app.use(cookieParser())
+app.use(cookieParser('secret'))// signed 要为true
 // 设置cookie之后在响应头的 Set-Cookie字段会有设置的cookie信息
 // 之后前端发送请求时请求体就会携带上这个cookie信息
 res.cookie("name",'zhangsan',{maxAge: 900000, httpOnly: true})
 res.cookie(名称,值,{配置信息})
 
-// 获取设置的cookie
-req.cookies.name
+// 获取设置的cookie-这个属性是在安装了cookieParser中间件才有的。
+req.cookies
+// 使用原生的属性获取cookie
+req.headers.cookie
 
 app.get('/', function (req, res) {
   // Cookies that have not been signed
@@ -575,9 +578,10 @@ app.get('/', function (req, res) {
 5. secure： 当 secure 值为 true 时，cookie 在 HTTP 中是无效，在 HTTPS 中才有效 。
 6. Path： 表示 在那个路由下可以访问到cookie。
 7. httpOnly：是微软对 COOKIE 做的扩展。如果在 COOKIE 中设置了“httpOnly”属性，则通过程序（JS 脚applet 等）将无法读取到COOKIE 信息，防止 XSS 攻击的产生 。
-8. singed：表示是否签名cookie, 设为true 会对这个 cookie 签名，这样就需要用 res.signedCookies 而不res.cookies 访问它。被篡改的签名 cookie 会被服务器拒绝，并且 cookie 值会重置为它的原始值。
+8. singed：表示是否签名cookie, 设为true 会对这个 cookie 签名，这样就需要用 res.signedCookies 而不res.cookies 访问它。
+被篡改的签名 cookie 会被服务器拒绝，并且 cookie 值会重置为它的原始值。
 cookie加密：让客户端用户无法的获取cookie明文信息，是数据安全的重要部分。在注册时传入密钥
-一般的我们可以在保存cookie时对cookie信息进行加密，或者在res.cookie中对option对象的signed属性设置设置成true即可。当option中signed设置为true后，底层会将cookie的值与“secret”进行hmac加密；
+一般的我们可以在保存cookie时对cookie信息进行加密，或者在res.cookie中对option对象的signed属性设置设置成true即可。当option中signed设置为true后，底层会将cookie的值与“secret”进行hmac加密。
 
 ## 4.4 session 相关的中间件
 session是另一种记录客户状态的机制，与cookie保存在客户端浏览器不同，session保存在服务器当中。

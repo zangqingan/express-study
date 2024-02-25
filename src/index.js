@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // 解析 application/json
 app.use(bodyParser.json())
 
-// 解析cookie
+// 解析cookie-放到 req.cookies 属性上
 app.use(cookieParser())
 
 /*数据库连接配置文件导入 */
@@ -73,7 +73,7 @@ require('./config/mongodbConnect')()
 // const allRouter = require('./routers/index')
 // allRouter(app)
 // 简写
-require('./routers/index')(app)
+require('./routes/index')(app)
 
 
 // error handler

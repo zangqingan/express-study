@@ -163,7 +163,18 @@ router.post('/jsonp',async (req,res) => {
  
 })
 
-
+router.get('/cookies',async (req,res) => {
+    // 后端设置cookie返回
+    res.cookie("name",'zhangsan',{maxAge: 900000, httpOnly: true})
+    res.status(200).send({msg:'cookie'})
+})
+router.get('/send-cookies',async (req,res) => {
+    // 后端设置cookie返回
+    console.log('req.headers.cookie',req.headers.cookie)
+    console.log('req.cookies',req.cookies)
+    // 这里就可以判断cookie是否是正确的
+    res.status(200).send({msg:'send-cookies'})
+})
 
 
 
