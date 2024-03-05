@@ -543,14 +543,18 @@ require('dotenv').config({
 1. 自定义中间件解决
 ```javaScript
 const cors = function (req, res, next) {
+   // 允许来自所有域名请求
    res.header('Access-Control-Allow-Origin', '*');
-   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+   // 设置所允许的HTTP请求方法
    res.header('Access-Control-Allow-Methods', '*');
+   // 字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段.
+   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    // 服务器收到请求以后，检查了Origin、Access-Control-Request-Method和Access-Control-Request-Headers字段以后，确认允许跨源请求，就可以做出回应。
+    // Content-Type表示具体请求中的媒体类型信息
    res.header('Content-Type', 'application/json;charset=utf-8');
    next();
 }
 app.use(cors)
-
 
 ```  
 2. 使用官方维护的中间件 cors
@@ -566,7 +570,6 @@ app.get('/products/:id', cors(), function (req, res, next) {
 })
 
 ```
-
 
 ## 4.3 body-parser 解析HTTP请求体
 使用这个中间件后、数据会自动挂载在 req.body属性上。
@@ -784,7 +787,50 @@ router.post('/login/password', passport.authenticate('local', {
 
 ```
 
-## 4.9 Unit Testing 单元测试 Jest 
+## 4.9 操作数据库中间件
+在使用node做后端时一般会用到3个数据库: mysql、mongodb、redis
+### 1. mongodb
+和原生node一样、express我们也是用 mongoose 这个包来连接mongodb数据库并进行crud操作。
+和原生node和express一样在koa中也是通过第三方插件 mongoose 实现对mongodb数据库的crud操作。
+安装:`$ npm i mongoose`、用法都是类似的、数据库的连接抽离出来、每一个集合放一个文件里。
+```JavaScript
+// 创建连接文件
+module.exports = async () => {
+    // 1.引入mongoose模块
+    const mongoose = require('mongoose')
+    // 引入数据库配置
+    const {MONGODB_CONF} = require('./globalConfig')
+    // 2.建立连接
+    try {
+      await mongoose.connect(MONGODB_CONF)
+    } catch (error) {
+      console.log("数据库连接失败",error)
+      throw error
+    }
+}
+// 然后在入口文件引入即可。
+require('./config/mongodbConnect')()
+
+// 设计schema(模型)
+// 引入mongoose
+const mongoose = require('mongoose')
+// 定义一个约定schema
+const schema = new mongoose.Schema({
+    name:{type:String},
+    title:{type:String},
+    weight:{type:Number}
+})
+// 创建一个模型并导出
+module.exports = mongoose.model('Product',schema)
+
+// 之后哪里需要引入集合对象就可以进行crud操作了和之前原生node、学习一样的。
+
+```
+
+### 2. mysql
+### 3. redis
+
+## 4.10 Unit Testing 单元测试 Jest 
 Jest是一个令人愉快的JavaScript测试框架，专注于简单性。
 安装`$ npm install --save-dev jest`
 额外的配置 `$ npm init jest@latest`
@@ -799,7 +845,7 @@ module.exports = {
 
 ```
 
-## 4.10 E2E Testing 测试 
+## 4.11 E2E Testing 测试 
 
 
 # 五、生产最佳实践
