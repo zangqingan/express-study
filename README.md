@@ -503,6 +503,41 @@ Express常用的第三方中间件可以查看[常用中间件列表](http://exp
 ## 4.1 dotenv
 安装: `$ npm install dotenv`,读取本地env配置文件并挂载到process.env对象上。
 
+使用也是非常简单的
+```javaScript
+// .env
+APP_PORT=3000
+SECRET_KEY="YOURSECRETKEYGOESHERE"
+// 入口文件app.js
+require('dotenv').config()
+// 之后就可以通过 process.env 这个对象读取到.env文件中的内容
+console.log('env is',process.env)
+console.log('env is',process.env.APP_PORT)
+console.log('env is',process.env.SECRET_KEY)
+// 它可以接收一个配置对象选项
+require('dotenv').config({ 
+    path: '/custom/path/to/.env' // 指定路径下的 .env文件
+})
+
+
+```
+
+## 4.2 cross-env 
+和原生node是一样的在window平台上通过cross-env中间件设置环境变量。
+当设置环境变量为 NODE_ENV=production 时，易造成 Windows 命令的阻塞。
+在运行时，脚本通过检查 process.env.NODE_ENV 查找该值。通过 NODE_ENV 的值 判断服务器应在 开发 还是 生产模式下运行。
+本质是通过process的env属性对象获取自己设置的变量值,可以给NODE环境设置一个变量，就通过process.env.xxxxx来获取。
+安装:`$npm install --save-dev cross-env`
+```javaScript
+// 使用:在包管理文件package.json文件的scripts选项中设置。
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "cross-env NODE_ENV=dev nodemon ./src/app.js",
+    "prd": "cross-env NODE_ENV=production  pm2 ./src/app.js"
+  }
+
+```
+
 ## 4.2 cors 跨域处理中间件
 前端接口请求发生跨域时、后端的解决方案
 1. 自定义中间件解决
