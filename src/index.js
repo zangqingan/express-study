@@ -2,7 +2,9 @@ const path = require('path')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-
+require('dotenv').config()
+// console.log('env',process.env)
+// console.log('env',process.env.APP_NAME)
 // 1.引入express框架
 const express = require('express')
 // 2.初始化express实例app，用来创建web服务器 ，express() 是一个由 express 模块导出的顶层入口（top-level）函数。

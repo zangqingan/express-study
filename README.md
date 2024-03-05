@@ -8,6 +8,7 @@
 express是一个基于 Node.js 平台的，快速的、开放的、极简的 Web 开发框架，本质上是对原生nodejs的http模块的二次封装，并提供api方便开发者加快项目开发，便于团队开发。它类似于前端的jQuery。它是nodejs最常用的web server框架。我们主要也是学习express框架作为web server提供api使用。
 
 [官方网站](http://expressjs.com) 主要用来查询相关api
+
 [中间件列表](http://expressjs.com/en/resources/middleware.html) 主要用来查询常用中间件
 
 ## 2.2 安装
@@ -43,7 +44,7 @@ express是一个基于 Node.js 平台的，快速的、开放的、极简的 Web
     -controllers 控制器具体业务处理代码存放目录
     -models 数据库表定义文件目录
     -middleware  自定义模块第三方中间件 
-    -routers 项目路由
+    -routes 项目路由
     -views 前后端不分离时的页面文件
     -utils 自定义工具类
     -__tests__ 单元测试
@@ -78,6 +79,8 @@ app.listen(3000, () => {
   console.log(`Example app listening on port 3000`)
 })
 
+// 这就是一个简单的 express 应用，它创建并返回了一个监听在3000端口的 HTTP 服务器。
+// 注意：入口文件一定要简洁，一般只做初始化的操作，具体业务都分发下去由对应的中间件执行。
 
 ```
 
@@ -497,9 +500,10 @@ Express常用的第三方中间件可以查看[常用中间件列表](http://exp
 # 四、常用中间件学习 
 这些中间件主要包括由Express.js团队维护的、社区开发的、个人封装的。
 
-dotenv,读取本地env配置文件。
+## 4.1 dotenv
+安装: `$ npm install dotenv`,读取本地env配置文件并挂载到process.env对象上。
 
-## 4.1 cors 跨域处理中间件
+## 4.2 cors 跨域处理中间件
 前端接口请求发生跨域时、后端的解决方案
 1. 自定义中间件解决
 ```javaScript
@@ -529,7 +533,7 @@ app.get('/products/:id', cors(), function (req, res, next) {
 ```
 
 
-## 4.2 body-parser 解析HTTP请求体
+## 4.3 body-parser 解析HTTP请求体
 使用这个中间件后、数据会自动挂载在 req.body属性上。
 
 ```javaScript
@@ -546,7 +550,7 @@ app.use(function (req, res) {
 
 ```
 
-## 4.3 cookie 相关的中间件
+## 4.4 cookie 相关的中间件
 官方维护的中间件 cookie-parser、它可以解析cookie header并填充到 req.cookies 属性上。
 安装: `$ npm install cookie-parser`
 
@@ -586,7 +590,7 @@ app.get('/', function (req, res) {
 cookie加密：让客户端用户无法的获取cookie明文信息，是数据安全的重要部分。在注册时传入密钥
 一般的我们可以在保存cookie时对cookie信息进行加密，或者在res.cookie中对option对象的signed属性设置设置成true即可。当option中signed设置为true后，底层会将cookie的值与“secret”进行hmac加密。
 
-## 4.4 session 相关的中间件
+## 4.5 session 相关的中间件
 session是另一种记录客户状态的机制，与cookie保存在客户端浏览器不同，session保存在服务器当中。
 相当于升级版本的cookie，存放在服务器端更加的安全。
 当客户端访问服务器时，服务器会生成一个session对象，对象中保存的是key:value值，同时服务器会将key传回给客户端的cookie当中；当用户第二次访问服务器时，就会把cookie当中的key传回到服务器中，最后服务器会吧value值返回给客户端。
@@ -632,7 +636,7 @@ req.session.destroy(function(err){
 
 ```
 
-## 4.5 multer中间件
+## 4.6 multer中间件
 multer中间件是用来处理 multipart/form-data 类型的表单数据的、前端页面的form表单需要设置 enctype="multipart/form-data"。也就是文件上传。
 
 安装: `$ npm install multer`
@@ -652,7 +656,7 @@ app.post('/profile', upload.single('avatar'), function (req, res, next) {
 })
 ```
 
-## 4.6 validator 参数验证中间件
+## 4.7 validator 参数验证中间件
 前端传入的数据格式不对时直接报错不写入数据库，这是非常有必要的。
 这个库提供了很多开箱即用的检验方法、如: 非空判断、是否是布尔值、数字等等。
 它们都是一个中间件函数只需要在路由handler之前调用即可。
@@ -726,7 +730,7 @@ app.post(
 ```
 
 
-## 4.7 password 身份验证中间件
+## 4.8 password 身份验证中间件
 这是一种身份认证中间件非常灵活和模块化、可以使用:用户名和密码、邮箱等多种策略验证。
 如本地的用户名和密码验证
 安装`$ npm install passport passport-local`
@@ -745,7 +749,7 @@ router.post('/login/password', passport.authenticate('local', {
 
 ```
 
-## 4.8 Unit Testing 单元测试 Jest 
+## 4.9 Unit Testing 单元测试 Jest 
 Jest是一个令人愉快的JavaScript测试框架，专注于简单性。
 安装`$ npm install --save-dev jest`
 额外的配置 `$ npm init jest@latest`
@@ -760,7 +764,7 @@ module.exports = {
 
 ```
 
-## 4.9 E2E Testing 测试 
+## 4.10 E2E Testing 测试 
 
 
 # 五、生产最佳实践
