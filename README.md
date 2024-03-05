@@ -768,8 +768,8 @@ app.post(
 ```
 
 
-## 4.8 password 身份验证中间件
-这是一种身份认证中间件非常灵活和模块化、可以使用:用户名和密码、邮箱等多种策略验证。
+## 4.8 express认证与授权
+password 身份验证中间件这是一种身份认证中间件非常灵活和模块化、可以使用:用户名和密码、邮箱等多种策略验证。
 如本地的用户名和密码验证
 安装`$ npm install passport passport-local`
 **使用**
@@ -830,7 +830,9 @@ module.exports = mongoose.model('Product',schema)
 ### 2. mysql
 ### 3. redis
 
-## 4.10 Unit Testing 单元测试 Jest 
+## 4.10 错误处理中间件
+
+## 4.11 Unit Testing 单元测试 Jest 
 Jest是一个令人愉快的JavaScript测试框架，专注于简单性。
 安装`$ npm install --save-dev jest`
 额外的配置 `$ npm init jest@latest`
@@ -845,7 +847,7 @@ module.exports = {
 
 ```
 
-## 4.11 E2E Testing 测试 
+## 4.12 E2E Testing 测试 
 
 
 # 五、生产最佳实践
