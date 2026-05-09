@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// 定义模型
+model SysUser {
+  user_id        BigInt    @id @default(autoincrement()) @map("user_id")       /// 用户ID
+  dept_id        BigInt?   @map("dept_id")                                     /// 部门ID
+  user_name      String    @db.VarChar(30) @map("user_name")                   /// 用户账号
+  nick_name      String    @db.VarChar(30) @map("nick_name")                   /// 用户昵称
+  user_type      String    @default("00") @db.VarChar(2) @map("user_type")     /// 用户类型（00系统用户）
+  email          String    @default("") @db.VarChar(50) @map("email")          /// 用户邮箱
+  phone_number    String    @default("") @db.VarChar(11) @map("phone_number")    /// 手机号码
+  sex            String    @default("0") @db.Char(1) @map("sex")               /// 用户性别（0男 1女 2未知）
+  avatar         String    @default("") @db.VarChar(100) @map("avatar")        /// 头像地址
+  password       String    @default("") @db.VarChar(100) @map("password")      /// 密码
+  status         String    @default("0") @db.Char(1) @map("status")            /// 账号状态（0正常 1停用）
+  del_flag       String    @default("0") @db.Char(1) @map("del_flag")          /// 删除标志（0代表存在 2代表删除）
+  login_ip       String    @default("") @db.VarChar(128) @map("login_ip")      /// 最后登录IP
+  login_date     DateTime? @map("login_date")                                  /// 最后登录时间
+  pwd_update_date DateTime? @map("pwd_update_date")                            /// 密码最后更新时间
+  create_by      String    @default("") @db.VarChar(64) @map("create_by")      /// 创建者
+  create_time    DateTime? @map("create_time")                                 /// 创建时间
+  update_by      String    @default("") @db.VarChar(64) @map("update_by")      /// 更新者
+  update_time    DateTime? @map("update_time")                                 /// 更新时间
+  remark         String?   @db.VarChar(500) @map("remark")                     /// 备注
+
+  @@map("sys_user")
+}
+
+model SysRole {
+  role_id              BigInt    @id @default(autoincrement()) @map("role_id") /// 角色ID
+  role_name            String    @db.VarChar(30) @map("role_name")             /// 角色名称
+  role_key             String    @db.VarChar(100) @map("role_key")            /// 角色权限字符串
+  role_sort            Int       @map("role_sort")                            /// 显示顺序
+  data_scope           String    @default("1") @db.Char(1) @map("data_scope") /// 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
+  menu_check_strictly  Boolean   @default(true) @map("menu_check_strictly")   /// 菜单树选择项是否关联显示
+  dept_check_strictly  Boolean   @default(true) @map("dept_check_strictly")   /// 部门树选择项是否关联显示
+  status               String    @db.Char(1) @map("status")                   /// 角色状态（0正常 1停用）
+  del_flag             String    @default("0") @db.Char(1) @map("del_flag")   /// 删除标志（0代表存在 2代表删除）
+  create_by            String    @default("") @db.VarChar(64) @map("create_by") /// 创建者
+  create_time          DateTime? @map("create_time")                          /// 创建时间
+  update_by            String    @default("") @db.VarChar(64) @map("update_by") /// 更新者
+  update_time          DateTime? @map("update_time")                          /// 更新时间
+  remark               String?   @db.VarChar(500) @map("remark")              /// 备注
+
+  @@map("sys_role")
+}
+
+model SysMenu {
+  menu_id     BigInt    @id @default(autoincrement()) @map("menu_id") /// 菜单ID
+  menu_name   String    @db.VarChar(50) @map("menu_name")            /// 菜单名称
+  parent_id   BigInt?   @default(0) @map("parent_id")                /// 父菜单ID
+  order_num   Int?      @default(0) @map("order_num")                /// 显示顺序
+  path        String?   @default("") @db.VarChar(200) @map("path")   /// 路由地址
+  component   String?   @db.VarChar(255) @map("component")           /// 组件路径
+  query       String?   @db.VarChar(255) @map("query")               /// 路由参数
+  route_name  String?   @default("") @db.VarChar(50) @map("route_name") /// 路由名称
+  is_frame    Int?      @default(1) @map("is_frame")                 /// 是否为外链（0是 1否）
+  is_cache    Int?      @default(0) @map("is_cache")                 /// 是否缓存（0缓存 1不缓存）
+  menu_type   String?   @default("") @db.Char(1) @map("menu_type")    /// 菜单类型（M目录 C菜单 F按钮）
+  visible     String?   @default("0") @db.Char(1) @map("visible")     /// 菜单状态（0显示 1隐藏）
+  status      String?   @default("0") @db.Char(1) @map("status")      /// 菜单状态（0正常 1停用）
+  perms       String?   @db.VarChar(100) @map("perms")               /// 权限标识
+  icon        String?   @default("#") @db.VarChar(100) @map("icon")   /// 菜单图标
+  create_by   String?   @default("") @db.VarChar(64) @map("create_by") /// 创建者
+  create_time DateTime? @map("create_time")                           /// 创建时间
+  update_by   String?   @default("") @db.VarChar(64) @map("update_by") /// 更新者
+  update_time DateTime? @map("update_time")                           /// 更新时间
+  remark      String?   @default("") @db.VarChar(500) @map("remark")  /// 备注
+
+  @@map("sys_menu")
+}
+
+model SysUserRole {
+  user_id BigInt @map("user_id") /// 用户ID
+  role_id BigInt @map("role_id") /// 角色ID
+
+  @@id([user_id, role_id])
+  @@map("sys_user_role")
+}
+
+model SysRoleMenu {
+  role_id BigInt @map("role_id") /// 角色ID
+  menu_id BigInt @map("menu_id") /// 菜单ID
+
+  @@id([role_id, menu_id])
+  @@map("sys_role_menu")
+}
