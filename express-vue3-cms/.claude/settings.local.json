@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/prisma\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/bin\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/config\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/controllers\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/middleware\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/routes/api/v1\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/services\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/validations\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/utils\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/src/jobs\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/public\" \"e:/Full-stack-Engineer/studyNotes/express-study/express-vue3-cms/backend/logs\")",
+      "Bash(npm run *)"
+    ],
+    "additionalDirectories": [
+      "e:\\Full-stack-Engineer\\studyNotes\\express-study\\express-vue3-cms\\backend"
+    ]
+  }
+}
