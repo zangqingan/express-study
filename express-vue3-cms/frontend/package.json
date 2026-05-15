@@ -1,0 +1,31 @@
+{
+  "name": "express-vue3-cms-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CMS frontend monorepo - Nuxt 3 (public) + Vue 3 SPA (admin)",
+  "scripts": {
+    "dev:web": "pnpm --filter @cms/web dev",
+    "dev:admin": "pnpm --filter @cms/admin dev",
+    "build:web": "pnpm --filter @cms/web build",
+    "build:admin": "pnpm --filter @cms/admin build",
+    "lint": "eslint . --ext .ts,.vue --fix",
+    "format": "prettier --write \"**/*.{ts,vue,css,json}\"",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.27.0",
+    "@types/node": "^20.14.0",
+    "eslint": "^9.10.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.5.0"
+  },
+  "lint-staged": {
+    "*.{ts,vue,css,json}": ["prettier --write", "eslint --fix"]
+  },
+  "engines": {
+    "node": ">=20.16.0",
+    "pnpm": ">=9.0.0"
+  }
+}
